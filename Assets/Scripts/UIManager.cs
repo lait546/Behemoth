@@ -131,4 +131,10 @@ public class UIManager : MonoBehaviour
             }
         }
     }
+
+    private void OnDestroy()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
 }

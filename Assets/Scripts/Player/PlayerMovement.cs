@@ -94,10 +94,4 @@ public class PlayerMovement : MonoBehaviour
     {
         return cameraPivot;
     }
-
-    private void OnDestroy()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-    }
 }

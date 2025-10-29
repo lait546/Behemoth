@@ -38,7 +38,6 @@ public class Hippo : MonoBehaviour
     private int comboCount = 0;
     private Coroutine zzzCoroutine;
 
-    // Анимационные параметры
     private readonly int animSleep = Animator.StringToHash("Sleep");
     private readonly int animMouthOpen = Animator.StringToHash("MouthOpen");
     private readonly int animEating = Animator.StringToHash("Eating");
@@ -55,15 +54,12 @@ public class Hippo : MonoBehaviour
         if (sleepCanvas != null)
             sleepCanvas.gameObject.SetActive(true);
 
-        // Инициализируем первый уровень
         watermelonsToNextLevel = GetWatermelonsForLevel(currentLevel);
         levelTimer = levelTime;
 
         UIManager.Instance.UpdateLevel(currentLevel, currentLevelProgress, watermelonsToNextLevel);
         UIManager.Instance.UpdateLevelTimer(levelTimer);
         UIManager.Instance.UpdateSatisfaction(currentSatisfaction);
-
-        Debug.Log($"Старт игры: Уровень {currentLevel}, требуется арбузов: {watermelonsToNextLevel}");
 
         UpdateStatusText();
     }
@@ -168,7 +164,6 @@ public class Hippo : MonoBehaviour
         {
             currentState = HippoState.Eating;
 
-            // Проверяем, не достигли ли мы уровня
             CheckLevelCompletion();
 
             Invoke(nameof(FinishEating), eatingDuration);
@@ -181,12 +176,10 @@ public class Hippo : MonoBehaviour
 
     private void CheckLevelCompletion()
     {
-        // Если набрали достаточно арбузов для уровня
         if (currentLevelProgress >= watermelonsToNextLevel)
         {
             currentSatisfaction = 1f;
             UIManager.Instance.UpdateSatisfaction(currentSatisfaction);
-            Debug.Log($"Уровень {currentLevel} завершен! Съедено {currentLevelProgress}/{watermelonsToNextLevel} арбузов");
         }
     }
 
@@ -202,7 +195,6 @@ public class Hippo : MonoBehaviour
 
     private void CheckSleepCycle()
     {
-        // Переходим в сон только если сытость полная И прогресс уровня достигнут
         if (currentSatisfaction >= 1f && currentLevelProgress >= watermelonsToNextLevel &&
             !isSleepingCycle && currentState != HippoState.Eating)
         {
@@ -239,14 +231,12 @@ public class Hippo : MonoBehaviour
     {
         isSleepingCycle = false;
         currentSatisfaction = 0f;
-        currentLevelProgress = 0; // Сбрасываем прогресс для нового уровня
+        currentLevelProgress = 0;
         UIManager.Instance.UpdateSatisfaction(currentSatisfaction);
         currentState = HippoState.Awake;
 
         if (zzzCoroutine != null)
             StopCoroutine(zzzCoroutine);
-
-        Debug.Log($"Бегемот проснулся! Уровень {currentLevel}, требуется арбузов: {watermelonsToNextLevel}");
     }
 
     private void UpdateAnimations()
@@ -311,15 +301,11 @@ public class Hippo : MonoBehaviour
             comboCount++;
             currentLevelProgress++;
 
-            // Обновляем сытость (но она теперь только для визуала)
             currentSatisfaction = Mathf.Clamp01((float)currentLevelProgress / watermelonsToNextLevel);
 
             UIManager.Instance.UpdateSatisfaction(currentSatisfaction);
             UIManager.Instance.UpdateLevel(currentLevel, currentLevelProgress, watermelonsToNextLevel);
 
-            Debug.Log($"Арбуз съеден! Уровень: {currentLevel}, Прогресс: {currentLevelProgress}/{watermelonsToNextLevel}");
-
-            // Если достигли максимума за сессию
             if (watermelonsInCurrentSession >= maxWatermelonsPerSession)
             {
                 FinishMouthOpenSession();
@@ -338,27 +324,10 @@ public class Hippo : MonoBehaviour
         watermelonsToNextLevel = GetWatermelonsForLevel(currentLevel);
 
         UIManager.Instance.UpdateLevel(currentLevel, 0, watermelonsToNextLevel);
-
-        Debug.Log($"?? ПОВЫШЕНИЕ УРОВНЯ! Новый уровень: {currentLevel}, требуется арбузов: {watermelonsToNextLevel}");
     }
 
     private int GetWatermelonsForLevel(int level)
     {
-        //// Явная прогрессия по уровням
-        //switch (level)
-        //{
-        //    case 1: return 3;
-        //    case 2: return 5;
-        //    case 3: return 8;
-        //    case 4: return 12;
-        //    case 5: return 17;
-        //    case 6: return 23;
-        //    case 7: return 30;
-        //    case 8: return 38;
-        //    case 9: return 47;
-        //    case 10: return 57;
-        //    default: return 57 + (level - 10) * 10; // После 10 уровня +10 за уровень
-        //}
         return baseWatermelonsPerLevel + (level - 1) * 2;
     }
 
